@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------------
-* injector.cpp
+* injector_x64.cpp
 *-----------------------------------------------------------------------------
 *
 *-----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ BOOL SetPrivilege(_In_z_ const wchar_t* privilege, _In_ bool enable)
 HANDLE AdvancedOpenProcess(_In_ DWORD pid)
 {
 	HANDLE ret = NULL;
-	if (true != SetPrivilege(L"SeDebugPrivilege", true)) return ret;
+	if (TRUE != SetPrivilege(L"SeDebugPrivilege", true)) return ret;
 
 	do
 	{
@@ -94,7 +94,7 @@ HANDLE AdvancedOpenProcess(_In_ DWORD pid)
 		if (NULL == ret) 
 			break;
 
-		if (true != SetPrivilege(L"SeDebugPrivilege", false))
+		if (TRUE != SetPrivilege(L"SeDebugPrivilege", false))
 		{
 			CloseHandle(ret); 
 			ret = NULL;
@@ -105,7 +105,7 @@ HANDLE AdvancedOpenProcess(_In_ DWORD pid)
 	return ret;
 }
 
-BOOL myRtlCreateUserThread(_In_ HANDLE process_handle, _In_ TCHAR *buffer, _In_ unsigned int buffer_size)
+BOOL myRtlCreateUserThread(_In_ HANDLE process_handle, _In_ TCHAR *buffer, _In_ SIZE_T buffer_size)
 {
 	HMODULE ntdll = NULL;
 	HMODULE kernel32 = NULL;
@@ -173,7 +173,7 @@ BOOL myRtlCreateUserThread(_In_ HANDLE process_handle, _In_ TCHAR *buffer, _In_ 
 BOOL InjectThread(_In_ DWORD pid, _In_ const TCHAR* dll_path)
 {
 	HANDLE process_handle = NULL;
-	unsigned int buffer_size = 0;
+	SIZE_T buffer_size = 0;
 	TCHAR *buffer = NULL;
 	SIZE_T byte_written = 0;
 
@@ -194,13 +194,13 @@ BOOL InjectThread(_In_ DWORD pid, _In_ const TCHAR* dll_path)
 			return false;
 		}
 
-		if (true != WriteProcessMemory(process_handle, buffer, dll_path, buffer_size, &byte_written))
+		if (TRUE != WriteProcessMemory(process_handle, buffer, dll_path, buffer_size, &byte_written))
 		{
 			_tprintf(_T("WriteProcessMemory Func err gle : 0x%08X"), GetLastError());
 			return false;
 		}
 
-		if (true != myRtlCreateUserThread(process_handle, buffer, buffer_size))
+		if (TRUE != myRtlCreateUserThread(process_handle, buffer, buffer_size))
 		{
 			_tprintf(_T("myRtlCreateUserThread Func err gle : 0x%08X"), GetLastError());
 			return false;
@@ -221,7 +221,7 @@ int _tmain(int argc, TCHAR* argv[])
 
 	if (argc != 3)
 	{
-		_tprintf(_T("Usage: %s <PROCESS_NAME|PID> <DLL_PATH>\n"),argv[0]);
+		_tprintf(_T("Usage: <PID> <DLL_PATH>\n"));
 		return 0;
 	}
 
