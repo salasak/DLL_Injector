@@ -11,7 +11,6 @@
 #include<stdio.h>
 #include<Windows.h>
 #include<tchar.h>
-#include<TlHelp32.h>
 #include<sal.h>
 
 #define DLL_PATH argv[2]
